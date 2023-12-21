@@ -29,7 +29,7 @@ infoController.datsUApp = function (req, res) {
 infoController.datsU = async function (req, res) {
   try {
     var userId = req.params.userId;
-    console.log("usER ID: " + userId);
+    //console.log("usER ID: " + userId);
     var usuario = await UserModel.findById(userId);
     if (usuario) {
       res.json(usuario);

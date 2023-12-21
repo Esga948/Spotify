@@ -41,7 +41,8 @@
           axios
             .post("/loginApp", formData)
             .then((response) => {
-              window.location.href = "/redirectInicio";              
+              console.log("respuesta: " + response);
+              window.location.href = "/redirectInicio";
             })
             .catch((error) => {
               console.log("Error: " + error);

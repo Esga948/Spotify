@@ -6,7 +6,6 @@ const fs = require("fs");
 const secretKey = "hola1234";
 const { UserAppModel } = require("../bdConnect");
 
-
 var usuarioAppController = {};
 
 //controlamos las resouestas del modelo
@@ -21,7 +20,7 @@ usuarioAppController.createUser = function (req, res) {
     password: req.body.password,
   };
 
-  let response = { state: false, mensaje: "" };
+  //let response = { state: false, mensaje: "" };
 
   if (
     newUserApp.name == undefined ||
@@ -32,16 +31,16 @@ usuarioAppController.createUser = function (req, res) {
     console.log("Todos los campos son obligatorios");
   } else {
     usuarioAppModel.ValidarEmail(newUserApp, function (respE) {
-      console.log(respE);
+      //console.log(respE);
       if (respE.existe == true) {
         //error
-        response.mensaje = "Este email ya está registrado";
+        error.json({state: false, mensaje: "Email ya registrado"})
         console.log("Este email ya está registrado");
       } else {
         console.log("Añadiendo");
 
         //añadimos el usuario a la base de datos
-        console.log(newUserApp);
+        //console.log(newUserApp);
         usuarioAppModel
           .Registrar(newUserApp)
           .then((resp) => {
@@ -73,13 +72,13 @@ usuarioAppController.createUser = function (req, res) {
               } else {
                 //console.log(info);
                 console.log("Token enviado");
-                response.state = true;
-                response.mensaje = "Token enviado";
+                res.json({state: true, mensaje: "Token enviado"})
+
               }
             });
           })
           .catch((error) => {
-            res.json({
+            error.json({
               state: false,
               mensaje: "Error al almacenar",
               error: error,
@@ -88,7 +87,6 @@ usuarioAppController.createUser = function (req, res) {
       }
     });
   }
-  res.json(response);
 };
 
 usuarioAppController.loginAppUser = (req, res, next) => {
@@ -101,17 +99,17 @@ usuarioAppController.loginAppUser = (req, res, next) => {
 
   usuarioAppModel.ValidarEmail(userData, async function (respEmail) {
     if (respEmail.existe == false) {
-      resp.msj = "No se ha encontrado el usuario" ;
+      resp.msj = "No se ha encontrado el usuario";
       console.log("No se ha encontrado el usuario");
     } else {
-      var user = await UserAppModel.findOne({ email: userData.email })
+      var user = await UserAppModel.findOne({ email: userData.email });
       const resultPAssword = userData.password;
       if (resultPAssword != user.password) {
-        resp.msj = "Contraseña incorrecta"; 
+        resp.msj = "Contraseña incorrecta";
         console.log("Contraseña incorrecta");
       } else {
         resp.state = true;
-        resp.msj =  "Inicio de sesión correcto";
+        resp.msj = "Inicio de sesión correcto";
         console.log("Inicio de sesion correcto");
       }
     }

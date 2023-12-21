@@ -46,12 +46,14 @@
             password: password,
           };
 
-          console.log(userId);
           axios
             .post("/register/" + userId, formData)
             .then(async (response) => {
+              console.log("respuesta: " + response);
+
               //window.location.href = "/token?userId=" + userId;
-              window.location.href = "/redirectToken"
+              //window.location.href = "/redirectToken";
+              window.location.href = "/redirectToken";
             })
             .catch((error) => {
               console.log("Error: " + error);
