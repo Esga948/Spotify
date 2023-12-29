@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Log in</title>
+  </head>
+  <body>
+    <div class="loginApp">
+      <form id="loginAppForm">
+        <label for="email">Email</label>
+        <input type="text" id="email" required />
+
+        <label for="password">Contraseña</label>
+        <input type="password" id="password" required />
+
+        <div id="msjError" style="color: red"><p></p></div>
+
+        <div>
+          <button id="btn_loginApp">Log in</button>
+        </div>
+      </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      //Cuando le damos click al boton con id btn_login nos llevará a la url /login
+      document.addEventListener("DOMContentLoaded", function () {
+        var loginAppForm = document.getElementById("loginAppForm");
+        var loginbtn = document.getElementById("btn_loginApp");
+
+        loginbtn.addEventListener("click", function () {
+          var email = document.getElementById("email").value;
+          var password = document.getElementById("password").value;
+
+          var formData = {
+            email: email,
+            password: password,
+          };
+
+          axios
+            .post("/loginApp", formData)
+            .then((response) => {
+              console.log("respuesta: " + response);
+              window.location.href = "/redirectInicio";
+            })
+            .catch((error) => {
+              console.log("Error: " + error);
+            });
+        });
+      });
+    </script>
+  </body>
+</html>

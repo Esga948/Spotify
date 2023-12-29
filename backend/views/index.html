@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Spotify api</title>
+  </head>
+  <body>
+    <h1>Inicio sesión</h1>
+    <div>
+      <button id="btn_login">Log in</button>
+    </div>
+
+    <script>
+      //Cuando le damos click al boton con id btn_login nos llevará a la url /login
+      document.addEventListener("DOMContentLoaded", function () {
+        var loginbtn = document.getElementById("btn_login");
+        loginbtn.addEventListener("click", function () {
+          window.location.href = "/login";
+        });
+      });
+    </script>
+  </body>
+</html>

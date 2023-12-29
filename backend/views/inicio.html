@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Datos</title>
+  </head>
+  <body>
+    <h2>Datos Usuario Spotify</h2>
+
+    <p id="userName">Nombre:</p>
+    <p id="userEmail">Email:</p>
+
+    <!--h2>Datos Usuario Spoty</h2>
+
+    <p id="userNameApp">Nombre:</p>
+    <p id="userEmailApp">Email:</p -->
+
+
+    <h3>Canciones favoritas</h3>
+    <ul id="listaTracks"></ul>
+
+    <h3>Top 5 Generos más escuchados</h3>
+    <ol id="listaGeneros"></ol>
+
+    <div>
+      <button id="btn_logout">Log out</button>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      var userId = new URLSearchParams(window.location.search).get("userId");
+      axios
+        .get("/datsU/" + userId)
+        .then(async (response) => {
+          var usuario = response.data;
+          var generosEscuchados = {};          
+
+          document.getElementById("userName").textContent = usuario.name;
+          document.getElementById("userEmail").textContent = usuario.email;
+
+          /*var userApp = axios.get("/datsUApp/" + userId);
+          var userApp2 = userApp.data;
+
+          document.getElementById("userNameApp").textContent = userApp2.name;
+          document.getElementById("userEmailApp").textContent = userApp2.email;*/
+
+          var listaTracks = document.getElementById("listaTracks");
+          var listaGeneros = document.getElementById("listaGeneros");
+
+          var promesas = usuario.tracks.map(async (trackId) => {
+            try {
+              var trackId2 = await axios.get("/datsT/" + trackId);
+              var track = trackId2.data;
+
+              var trackInfo = `Nombre: ${track.name}, Artistas: `;
+
+              if (track.idsArtist.length > 0) {
+                var i = 0;
+                for (var artistId of track.idsArtist) {
+                  try {
+                    var artistId2 = await axios.get("/datsA/" + artistId);
+                    var artist = artistId2.data;
+                    trackInfo += `${artist.name}`;
+
+                    if (i < track.idsArtist.length - 1) {
+                      trackInfo += `, `;
+                    }
+
+                    for (var genre of artist.genres) {
+                      if (generosEscuchados[genre] == null) {
+                        generosEscuchados[genre] = 1;
+                      } else {
+                        generosEscuchados[genre] += 1;
+                      }
+                    }
+                  } catch (error) {
+                    console.log("Error al obtener el artista " + error);
+                  }
+                  i++;
+                }
+              } else {
+                trackInfo += "Desconocido";
+              }
+
+              trackInfo += `, Album: ${track.album}`;
+
+              var listaT = document.createElement("li");
+              listaT.textContent = trackInfo;
+              listaTracks.appendChild(listaT);
+            } catch (error) {
+              console.log("Error al obtener la cancion " + error);
+            }
+          });
+          await Promise.all(promesas);
+
+          var generosOrdenados = Object.keys(generosEscuchados).sort(function (
+            a,
+            b
+          ) {
+            return generosEscuchados[b] - generosEscuchados[a];
+          });
+          var top5g = generosOrdenados.slice(0, 5);
+          top5g.forEach((genero) => {
+            var listaG = document.createElement("li");
+            listaG.textContent = `${genero}`;
+            listaGeneros.appendChild(listaG);
+          });
+        })
+        .catch((error) => console.log("Error " + error));
+
+      document.addEventListener("DOMContentLoaded", function () {
+        var loginbtn = document.getElementById("btn_logout");
+        loginbtn.addEventListener("click", function () {
+          window.location.href = "/logout";
+        });
+      });
+    </script>
+  </body>
+</html>
