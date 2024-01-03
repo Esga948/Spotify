@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
-import {HttpClientModule} from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -10,7 +10,7 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { LoginAppComponent } from './pages/login-app/login-app.component';
 import { RegisterAppComponent } from './pages/register-app/register-app.component';
 import { InicioAppService } from './services/inicio-app.service';
-import { TokenComponent } from './pages/token/token.component';
+import { AuthTokenComponent } from './pages/auth-token/auth-token.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -18,15 +18,10 @@ import { TokenComponent } from './pages/token/token.component';
     NavbarComponent,
     LoginAppComponent,
     RegisterAppComponent,
-    TokenComponent
+    AuthTokenComponent,
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    FormsModule,
-    HttpClientModule,
-  ],
+  imports: [BrowserModule, AppRoutingModule, FormsModule, HttpClientModule],
   providers: [InicioAppService],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

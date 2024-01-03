@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TokenComponent } from './token.component';
+import { AuthTokenComponent } from './auth-token.component';
 
-describe('TokenComponent', () => {
-  let component: TokenComponent;
-  let fixture: ComponentFixture<TokenComponent>;
+describe('AuthTokenComponent', () => {
+  let component: AuthTokenComponent;
+  let fixture: ComponentFixture<AuthTokenComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [TokenComponent]
+      declarations: [AuthTokenComponent]
     });
-    fixture = TestBed.createComponent(TokenComponent);
+    fixture = TestBed.createComponent(AuthTokenComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

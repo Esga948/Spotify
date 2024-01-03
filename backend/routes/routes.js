@@ -30,4 +30,6 @@ router.get("/datsA/:artistId", infoController.datsA);
 
 router.post("/registerApp", usuarioAppController.createUser);
 router.post("/loginApp", usuarioAppController.loginAppUser);
+router.post("/authToken", usuarioAppController.authToken);
+
 module.exports = router;

@@ -20,6 +20,7 @@ export class InicioAppService {
           if (res) {
             // guardar token
             this.saveToken(res.dataUser.aToken, res.dataUser.expiresIn);
+            this.saveEmail(user.email);
           }
         })
       );
@@ -38,6 +39,21 @@ export class InicioAppService {
       );
   }
 
+  authToken(frontToken: string): Observable<{tokens: boolean}> {
+    const email = this.getEmail();
+    return this.httpClient
+      .post<{tokens: boolean}>(`${this.APP_SERVER}/authToken`, { email, token: frontToken })
+      .pipe(
+        tap((res) => {
+          if (res.tokens) {
+            console.log('Los tokens coinciden');
+          } else {
+            console.log('Los tokens no coinciden');
+          }
+        })
+      );
+  }
+
   logout(): void {
     this.token = '';
     localStorage.removeItem('ACCESS_TOKEN');
@@ -51,9 +67,13 @@ export class InicioAppService {
   }
 
   private getToken(): string {
-    if (!this.token) {
-      this.token = localStorage.getItem('ACCESS_TOKEN') ?? '';
-    }
-    return this.token;
+    return (this.token = localStorage.getItem('ACCESS_TOKEN') ?? '');
+  }
+
+  private saveEmail(email: string): void {
+    localStorage.setItem('EMAIL', email);
+  }
+  private getEmail(): string {
+    return localStorage.getItem('EMAIL') ?? '';
   }
 }

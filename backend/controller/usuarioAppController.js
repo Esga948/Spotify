@@ -8,13 +8,13 @@ const { UserAppModel } = require("../bdModel.js");
 
 var usuarioAppController = {};
 
-//controlamos las resouestas del modelo
+//funcion para crear el usuario y guardarlo en la base de datos
 usuarioAppController.createUser = function (req, res) {
   var userId = req.params.userId;
   req.session.userId = userId;
   var salt = bcrypt.genSaltSync(10);
 
-  const token = Math.round(Math.random() * 999999);
+  const token = Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
 
   var newUserApp = {
     //_id: userId,
@@ -36,8 +36,7 @@ usuarioAppController.createUser = function (req, res) {
         aToken: aToken,
         expiresIn: expiresIn,
       };
-      console.log(dataUser);
-      //resp al front
+      //enviamos la respuesta al front
       res.send({ dataUser });
 
       //envio del correo
@@ -59,6 +58,7 @@ usuarioAppController.createUser = function (req, res) {
         subject: "Inicio de sesión",
         html: htmlContent,
       };
+
       //enviar el correo
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
@@ -78,65 +78,9 @@ usuarioAppController.createUser = function (req, res) {
         return res.status(500).json({ message: "Error interno del servidor" });
       }
     });
-  //let response = { state: false, mensaje: "" };
-  /*
-   usuarioAppModel.ValidarEmail(newUserApp, function (respE) {
-    //console.log(respE);
-    if (respE.existe == true) {
-      //error
-      error.json({ state: false, mensaje: "Email ya registrado" });
-      console.log("Este email ya está registrado");
-    } else {
-      console.log("Añadiendo");
-
-      //añadimos el usuario a la base de datos
-      //console.log(newUserApp);
-      usuarioAppModel
-        .Registrar(newUserApp)
-        .then((resp) => {
-          //enviamoe el correo
-          let transporter = nodemailer.createTransport({
-            host: "smtp.gmail.com",
-            auth: {
-              user: "esga948@vidalibarraquer.net",
-              pass: "39471948S",
-            },
-          });
-          //config correo
-
-          const htmlTemp = fs.readFileSync("../backend/email.html", "utf-8");
-          const htmlContent = htmlTemp.replace("{{token}}", resp.token);
-
-          let mailOptions = {
-            from: "esga948@vidalibarraquer.net",
-            to: newUserApp.email,
-            subject: "Inicio de sesión",
-            html: htmlContent,
-          };
-
-          //enviar el correo
-          transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-              console.log(error);
-              res.status(500).json({ error: error });
-            } else {
-              //console.log(info);
-              console.log("Token enviado");
-              res.json({ state: true, mensaje: "Token enviado" });
-            }
-          });
-        })
-        .catch((error) => {
-          error.json({
-            state: false,
-            mensaje: "Error al almacenar",
-            error: error,
-          });
-        });
-    }
-  });*/
 };
 
+//funcion para iniciar sesion y comprobaciones
 usuarioAppController.loginAppUser = async (req, res, next) => {
   const userData = {
     email: req.body.email,
@@ -173,69 +117,29 @@ usuarioAppController.loginAppUser = async (req, res, next) => {
     console.log("Error: " + err);
     return res.status(500).json({ msj: "Error" });
   }
-  /*
-  UserAppModel.findOne({ email: userData.email }, (err, user) => {
-    if (err) return res.status(500).send("Server error");
+};
+
+//verificar que el token es igual al que se ha enviado
+usuarioAppController.authToken = async function (req, res) {
+  const front = req.body.token;
+  const email = req.body.email;
+
+  try {
+    const user = await UserAppModel.findOne({ email: email });
+
     if (!user) {
-      //usuario no encontrado
-      console.log("usuario no encontrado");
-      res.status(409).send({ msj: "Error" });
+      console.log("Usuario no encontrado");
+      return res.status(404).json({ msj: "Usuario no encontrado" });
     } else {
-      const resultPass = userData.password;
-      if (resultPass) {
-        const expiresIn = 14 * 60 * 60;
-        const aToken = jwt.sign({ id: user.id }, secretKey, {
-          expiresIn: expiresIn,
-        });
-        res.send({ userData });
-      } else {
-        //contraseña incorrecta
-        console.log("Contraseña incorrecta");
-        res.status(409).send({ msj: "Error" });
-      }
+      const tokens = front.token === user.token;
+      //console.log("Booleano: " + tokens);
+      return res.json({ tokens });
     }
-  });
-  usuarioAppModel.ValidarEmail(userData, async function (respEmail) {
-    if (respEmail.existe == false) {
-      resp.msj = "No se ha encontrado el usuario";
-      console.log("No se ha encontrado el usuario");
-    } else {
-      var user = await UserAppModel.findOne({ email: userData.email });
-      const resultPAssword = userData.password;
-      if (resultPAssword != user.password) {
-        resp.msj = "Contraseña incorrecta";
-        console.log("Contraseña incorrecta");
-      } else {
-        resp.state = true;
-        resp.msj = "Inicio de sesión correcto";
-        console.log("Inicio de sesion correcto");
-      }
-    }
-  });
-  res.json(resp);
-  */
-};
-/*
-usuarioAppController.inicioApp = function (req, res) {
-  res.sendFile("C:/Users/estel.garces/Spotify/backend/views/inicioApp.html");
+  } catch (error) {
+    console.log("Error: " + error);
+    return res.status(500).json({ msj: "Error del servidor" });
+  }
 };
 
-usuarioAppController.token = function (req, res) {
-  res.sendFile("C:/Users/estel.garces/Spotify/backend/views/token.html");
-};
 
-usuarioAppController.redirectToken = function (req, res) {
-  // Redirige a la página de inicio con el userId como parámetro
-  res.redirect(`/token?userId=${req.session.userId}`);
-};
-
-usuarioAppController.inicio = function (req, res) {
-  res.sendFile("C:/Users/estel.garces/Spotify/backend/views/inicio.html");
-};
-
-usuarioAppController.redirectInicio = function (req, res) {
-  // Redirige a la página de inicio con el userId como parámetro
-  res.redirect(`/inicio?userId=${req.session.userId}`);
-};
-*/
 module.exports = usuarioAppController;

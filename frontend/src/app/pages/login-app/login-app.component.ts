@@ -10,7 +10,6 @@ import { NgForm } from '@angular/forms';
   styleUrls: ['./login-app.component.scss']
 })
 export class LoginAppComponent implements OnInit{
-
   constructor(private inicioAppService: InicioAppService, private router: Router){}
 
   ngOnInit(): void {

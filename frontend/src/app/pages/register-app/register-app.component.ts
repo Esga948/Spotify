@@ -16,7 +16,7 @@ export class RegisterAppComponent implements OnInit {
 
   onRegister(form: NgForm): void {
     this.inicioAppService.registerApp(form.value).subscribe((res) => {
-      this.router.navigateByUrl('/home');
+      this.router.navigateByUrl('/authToken');
     });
   }
 }
