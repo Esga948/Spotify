@@ -14,7 +14,8 @@ const bodyParserURLEncoded = bodyParser.urlencoded({ extended: true });
 
 //configuracion base de datos
 var port = "8080";
-const url = "mongodb+srv://estelgarcesext:ZySSfXFqTDN2eKM4@cluster0.mrutfie.mongodb.net/Spoty";
+const url =
+  "mongodb+srv://estelgarcesext:ZySSfXFqTDN2eKM4@cluster0.mrutfie.mongodb.net/Spoty";
 
 //middleware para parsear solicitudes JSON y URL encoded
 app.use(bodyParserJSON);
@@ -27,14 +28,9 @@ app.all("*", function (req, res, next) {
 });
 
 //Habilitar el corse hablitar el acceso desde alguna url (localhost:8080)
-app.use(
-  cors({
-    origin: "http://localhost:8080",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-  })
-);
+app.use(cors());
 
-//Sistema de sesion 
+//Sistema de sesion
 app.use(
   session({
     secret: "clave",

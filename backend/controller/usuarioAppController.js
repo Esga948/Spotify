@@ -14,11 +14,14 @@ usuarioAppController.createUser = function (req, res) {
   req.session.userId = userId;
   var salt = bcrypt.genSaltSync(10);
 
+  const token = Math.round(Math.random() * 999999);
+
   var newUserApp = {
     //_id: userId,
     name: req.body.name,
     email: req.body.email,
     password: bcrypt.hashSync(req.body.password, salt),
+    token: token,
   };
 
   UserAppModel.create(newUserApp)
@@ -47,9 +50,8 @@ usuarioAppController.createUser = function (req, res) {
       });
       //config correo
 
-      const al = Math.round(Math.random()*999999);
-      const htmlTemp = fs.readFileSync("./backend/email.html", "utf-8");
-      const htmlContent = htmlTemp.replace("{{token}}", al);
+      const htmlTemp = fs.readFileSync("../backend/email.html", "utf-8");
+      const htmlContent = htmlTemp.replace("{{token}}", token);
 
       let mailOptions = {
         from: "esga948@vidalibarraquer.net",
@@ -57,16 +59,13 @@ usuarioAppController.createUser = function (req, res) {
         subject: "Inicio de sesión",
         html: htmlContent,
       };
-
       //enviar el correo
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
           console.log(error);
-          res.status(500).json({ error: error });
         } else {
           //console.log(info);
           console.log("Token enviado");
-          res.json({ state: true, mensaje: "Token enviado" });
         }
       });
     })
