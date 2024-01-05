@@ -54,10 +54,12 @@ export class InicioAppService {
       );
   }
 
-  logout(): void {
+  logout(userId: string): Observable<any>{
     this.token = '';
     localStorage.removeItem('ACCESS_TOKEN');
     localStorage.removeItem('EXPIRES_IN');
+    localStorage.removeItem('EMAIL');
+    return this.httpClient.post(`${this.APP_SERVER}/logout/${userId}`, {});
   }
 
   private saveToken(token: string, expiresIn: string): void {

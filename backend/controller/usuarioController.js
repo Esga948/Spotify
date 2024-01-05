@@ -48,10 +48,10 @@ async function fetchSpotifyData(endpoint, access_token) {
     });
   });
 }
-
+/*
 usuarioController.i = function (req, res) {
   res.sendFile("C:/Users/estel.garces/Spotify/backend/views/index.html");
-};
+};*/
 
 usuarioController.login = function (req, res) {
   //Genera una clave de estado y la guarda en la sesión del usuario
@@ -73,6 +73,7 @@ usuarioController.login = function (req, res) {
       })
   );
 };
+
 usuarioController.callback = function (req, res) {
   //La aplicación recibe un código de autorización y verifica el estado, obtiene el estado almacenado en la sesión
   var code = req.query.code || null;
@@ -199,7 +200,7 @@ usuarioController.callback = function (req, res) {
         }
         console.log("Fin de la ejecución");
         // Una vez iniciada la sesión, redirigimos a la página de inicio
-        res.redirect("/redirectRegister");
+        res.redirect(`http://localhost:4200/api/${req.session.userId}`);
       } else {
         res.redirect(
           "/#" +
@@ -239,16 +240,16 @@ usuarioController.refreshToken = function (req, res) {
     }
   });
 };
-
-usuarioController.register = function (req, res) {
-  res.sendFile("C:/Users/estel.garces/Spotify/backend/views/register.html");
+/*
+usuarioController.api = function (req, res) {
+  res.redirect("http://localhost:4200/api");
 };
 
-usuarioController.redirectRegister = function (req, res) {
+usuarioController.redirectApi = function (req, res) {
   // Redirige a la página de inicio con el userId como parámetro
-  res.redirect(`/register?userId=${req.session.userId}`);
+  res.redirect(`/api?userId=${req.session.userId}`);
 };
-
+*/
 usuarioController.logout = async function (req, res) {
   try {
     //elimina los tokens de la base de datos

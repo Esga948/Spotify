@@ -1,5 +1,5 @@
 var express = require("express");
-const CircularJSON = require('circular-json');
+const CircularJSON = require("circular-json");
 const router = express.Router();
 const mongoose = require("mongoose");
 const {
@@ -32,12 +32,13 @@ infoController.datsU = async function (req, res) {
     //console.log("usER ID: " + userId);
     var usuario = await UserModel.findById(userId);
     if (usuario) {
-      res.json(usuario);
+      return res.json(usuario);
     } else {
-      res.status(404).json({ message: "Usuario no encontrado" });
+      return res.status(404).json({ message: "Usuario no encontrado" });
     }
   } catch (error) {
     console.log(error);
+    return res.status(500).json({ msj: "Error en el servidor" });
   }
 };
 
@@ -46,12 +47,13 @@ infoController.datsT = async function (req, res) {
     var trackId = req.params.trackId;
     var track = await TrackModel.findById(trackId);
     if (track) {
-      res.json(track);
+      return res.json(track);
     } else {
-      res.status(404).json({ message: "Track no encontrado" });
+      return res.status(404).json({ message: "Track no encontrado" });
     }
   } catch (error) {
     console.log(error);
+    return res.status(500).json({ msj: "Error en el servidor" });
   }
 };
 
@@ -60,12 +62,13 @@ infoController.datsA = async function (req, res) {
     var artistId = req.params.artistId;
     var artista = await ArtistModel.findById(artistId);
     if (artista) {
-      res.json(artista);
+      return res.json(artista);
     } else {
-      res.status(404).json({ message: "Artista no encontrado" });
+      return res.status(404).json({ message: "Artista no encontrado" });
     }
   } catch (error) {
     console.log(error);
+    return res.status(500).json({ msj: "Error en el servidor" });
   }
 };
 

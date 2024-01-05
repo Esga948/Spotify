@@ -11,6 +11,9 @@ import { LoginAppComponent } from './pages/login-app/login-app.component';
 import { RegisterAppComponent } from './pages/register-app/register-app.component';
 import { InicioAppService } from './services/inicio-app.service';
 import { AuthTokenComponent } from './pages/auth-token/auth-token.component';
+import { ApiComponent } from './pages/api/api.component';
+import { LoginSpotyComponent } from './pages/login-spoty/login-spoty.component';
+import { ApiService } from './services/api.service';
 @NgModule({
   declarations: [
     AppComponent,
@@ -19,9 +22,11 @@ import { AuthTokenComponent } from './pages/auth-token/auth-token.component';
     LoginAppComponent,
     RegisterAppComponent,
     AuthTokenComponent,
+    ApiComponent,
+    LoginSpotyComponent,
   ],
   imports: [BrowserModule, AppRoutingModule, FormsModule, HttpClientModule],
-  providers: [InicioAppService],
+  providers: [InicioAppService, ApiService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

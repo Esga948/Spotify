@@ -4,6 +4,8 @@ const router = express.Router();
 const usuarioAppController = require("../controller/usuarioAppController.js");
 const usuarioController = require("../controller/usuarioController.js");
 const infoController = require("../controller/infoController.js");
+
+
 /*
 router.get("/", usuarioController.i);
 router.get("/login", usuarioController.login);
@@ -31,5 +33,14 @@ router.get("/datsA/:artistId", infoController.datsA);
 router.post("/registerApp", usuarioAppController.createUser);
 router.post("/loginApp", usuarioAppController.loginAppUser);
 router.post("/authToken", usuarioAppController.authToken);
+
+router.get("/login", usuarioController.login);
+router.get("/callback", usuarioController.callback);
+router.get("/refreshToken", usuarioController.refreshToken);
+router.get("/logout", usuarioController.logout);
+
+router.get("/datsU/:userId", infoController.datsU);
+router.get("/datsT/:trackId", infoController.datsT);
+router.get("/datsA/:artistId", infoController.datsA);
 
 module.exports = router;

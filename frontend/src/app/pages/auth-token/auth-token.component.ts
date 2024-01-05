@@ -8,18 +8,18 @@ import { NgForm } from '@angular/forms';
   templateUrl: './auth-token.component.html',
   styleUrls: ['./auth-token.component.scss'],
 })
-export class AuthTokenComponent implements OnInit {
-  constructor(
-    private inicioAppService: InicioAppService,
-    private router: Router
-  ) {}
 
-  ngOnInit(): void {}
+export class AuthTokenComponent implements OnInit {
+  constructor(private inicioAppService: InicioAppService, private router: Router) {}
+
+  ngOnInit(): void {
+
+  }
 
   onToken(form: NgForm): void {
     this.inicioAppService.authToken(form.value).subscribe((res) => {
       if (res.tokens) {
-        this.router.navigateByUrl('/home');
+        this.router.navigateByUrl('/login');
       }
     });
   }
