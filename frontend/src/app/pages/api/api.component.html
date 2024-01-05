@@ -4,26 +4,28 @@
 
     <h1 class="login-header">INICIO</h1>
 
-    <h2>Datos Usuario Spotify</h2>
+    <div class="login-container">
+      <h2>Datos Usuario Spotify</h2>
 
-    <p>Nombre: {{ user.name }}</p>
-    <p>Email: {{ user.email }}</p>
+      <p>Nombre: {{ user.name }}</p>
+      <p>Email: {{ user.email }}</p>
 
-    <h3>Canciones favoritas</h3>
-    <ul>
-      <li *ngFor="let track of tracks; let i = index">
-        Nombre: {{ track.name }}, Artistas: {{ artistNames[i] }}, Album:
-        {{ track.album }}
-      </li>
-    </ul>
+      <h3>Canciones favoritas</h3>
+      <ul>
+        <li *ngFor="let track of tracks; let i = index">
+          Nombre: {{ track.name }}, Artistas: {{ artistNames[i] }}, Album:
+          {{ track.album }}
+        </li>
+      </ul>
 
-    <h3>Top 5 Generos más escuchados</h3>
-    <ol>
-      <li *ngFor="let genre of getTopGenres()">{{ genre }}</li>
-    </ol>
+      <h3>Top 5 Generos más escuchados</h3>
+      <ol>
+        <li *ngFor="let genre of getTopGenres()">{{ genre }}</li>
+      </ol>
 
-    <div>
-      <button (click)="logout()">Log out</button>
+      <div>
+        <button id="btn" (click)="logout()">Log out</button>
+      </div>
     </div>
   </div>
 </div>
