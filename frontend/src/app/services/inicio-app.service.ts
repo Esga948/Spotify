@@ -10,6 +10,8 @@ export class InicioAppService {
   APP_SERVER: string = 'http://localhost:8080';
   appSubject = new BehaviorSubject(false);
   private token: string = '';
+  private name: string = '';
+  private email: string = '';
   constructor(private httpClient: HttpClient) {}
 
   registerApp(user: UserApp): Observable<JwtResp> {
@@ -20,6 +22,7 @@ export class InicioAppService {
           if (res) {
             // guardar token
             this.saveToken(res.dataUser.aToken, res.dataUser.expiresIn);
+            this.saveName(user.name);
             this.saveEmail(user.email);
           }
         })
@@ -39,10 +42,13 @@ export class InicioAppService {
       );
   }
 
-  authToken(frontToken: string): Observable<{tokens: boolean}> {
+  authToken(frontToken: string): Observable<{ tokens: boolean }> {
     const email = this.getEmail();
     return this.httpClient
-      .post<{tokens: boolean}>(`${this.APP_SERVER}/authToken`, { email, token: frontToken })
+      .post<{ tokens: boolean }>(`${this.APP_SERVER}/authToken`, {
+        email,
+        token: frontToken,
+      })
       .pipe(
         tap((res) => {
           if (res.tokens) {
@@ -54,10 +60,12 @@ export class InicioAppService {
       );
   }
 
-  logout(userId: string): Observable<any>{
+  logout(userId: string): Observable<any> {
     this.token = '';
+    this.email = '';
     localStorage.removeItem('ACCESS_TOKEN');
     localStorage.removeItem('EXPIRES_IN');
+    localStorage.removeItem('NAME');
     localStorage.removeItem('EMAIL');
     return this.httpClient.post(`${this.APP_SERVER}/logout/${userId}`, {});
   }
@@ -72,10 +80,21 @@ export class InicioAppService {
     return (this.token = localStorage.getItem('ACCESS_TOKEN') ?? '');
   }
 
+  private saveName(name: string): void {
+    console.log('NAME: ' + name);
+    this.name = name;
+  }
+
+  getName(): string {
+    return localStorage.getItem('NAME') ?? '';
+  }
+
   private saveEmail(email: string): void {
     localStorage.setItem('EMAIL', email);
+    this.email = email;
   }
-  private getEmail(): string {
+
+  getEmail(): string {
     return localStorage.getItem('EMAIL') ?? '';
   }
 }

@@ -1,14 +1,5 @@
 const mongoose = require("mongoose");
-/*
-const url =
-  "mongodb+srv://estelgarcesext:ZySSfXFqTDN2eKM4@cluster0.mrutfie.mongodb.net/Spoty";
 
-//conexión a la base de datos
-connect(url, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-*/
 // Define el modelo para guardar los usuarios de spotify
 const userSchema = new mongoose.Schema(
   {
@@ -24,7 +15,7 @@ const UserModel = mongoose.model("Users", userSchema);
 // Define el modelo para guardar los usuarios
 const userSchema2 = new mongoose.Schema(
   {
-    //_id: String,
+    idSpoty: { type: String, unique: true },
     name: String,
     email: { type: String, required: true, unique: true },
     password: String,

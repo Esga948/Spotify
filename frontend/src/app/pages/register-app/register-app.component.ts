@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { InicioAppService } from 'src/app/services/inicio-app.service';
-import { UserApp } from 'src/app/models/user-app';
 import { NgForm } from '@angular/forms';
 
 @Component({
@@ -16,6 +15,7 @@ export class RegisterAppComponent implements OnInit {
 
   onRegister(form: NgForm): void {
     this.inicioAppService.registerApp(form.value).subscribe((res) => {
+
       this.router.navigateByUrl('/authToken');
     });
   }

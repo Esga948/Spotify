@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { UserSpoty } from '../models/user-spoty';
 import { Track } from '../models/track';
 import { Artist } from '../models/artist';
-import { tap } from 'rxjs';
 import { Observable, BehaviorSubject } from 'rxjs';
 
 @Injectable({
@@ -28,5 +27,10 @@ export class ApiService {
 
   getArtist(artistId: string): Observable<Artist> {
     return this.http.get<Artist>(`${this.API_SERVER}/datsA/${artistId}`);
+  }
+
+  users(email: string, userId: string): Observable<any> {
+    const url = `${this.API_SERVER}/users/${email}/${userId}`;
+    return this.http.get(url);
   }
 }

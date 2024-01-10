@@ -6,8 +6,6 @@ import { Artist } from 'src/app/models/artist';
 import { Track } from 'src/app/models/track';
 import { InicioAppService } from 'src/app/services/inicio-app.service';
 import { forkJoin } from 'rxjs';
-import { from } from 'rxjs';
-import { concatMap } from 'rxjs';
 
 @Component({
   selector: 'app-api',
@@ -38,6 +36,8 @@ export class ApiComponent implements OnInit {
   };
   genres: { [key: string]: number } = {};
   artistNames: { [trackId: string]: string } = {};
+  userAppName: string = '';
+  userAppEmail: string = '';
 
   constructor(
     private apiService: ApiService,
@@ -47,7 +47,10 @@ export class ApiComponent implements OnInit {
 
   ngOnInit(): void {
     this.userId = this.route.snapshot.paramMap.get('userId') ?? '';
+    this.userAppName = this.inicioAppService.getName();
+    this.userAppEmail = this.inicioAppService.getEmail();
     this.getUserInfo();
+    this.users();
   }
 
   getUserInfo(): void {
@@ -56,19 +59,7 @@ export class ApiComponent implements OnInit {
       this.getTracksInfo();
     });
   }
-  /*
-  getTracksInfo(): void {
-    for (let trackId of this.user.tracks) {
-      this.apiService.getTrack(trackId).subscribe((track) => {
-        console.log(track);
-        this.tracks.push(track);
-        if (track.idsArtist.length > 0) {
-          this.getArtistsInfo(track.idsArtist, track.id);
-        }
-      });
-    }
-  }
-*/
+
   getTracksInfo(): void {
     const observables = this.user.tracks.map((trackId) =>
       this.apiService.getTrack(trackId)
@@ -86,9 +77,8 @@ export class ApiComponent implements OnInit {
   }
 
   getArtistsInfo(artistIds: string[], index: number): void {
-    const artistObservables = artistIds.map(
-      (artistId) => this.apiService.getArtist(artistId),
-      console.log('ARTISTS ID: ' + artistIds)
+    const artistObservables = artistIds.map((artistId) =>
+      this.apiService.getArtist(artistId)
     );
 
     forkJoin(artistObservables).subscribe((artists) => {
@@ -111,6 +101,12 @@ export class ApiComponent implements OnInit {
     return Object.keys(this.genres)
       .sort((a, b) => this.genres[b] - this.genres[a])
       .slice(0, 5);
+  }
+
+  users(): void {
+    this.apiService.users(this.userAppEmail, this.userId).subscribe((res) => {
+      console.log(res);
+    });
   }
 
   logout(): void {

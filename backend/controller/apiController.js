@@ -3,7 +3,7 @@ var session = require("express-session");
 var querystring = require("querystring");
 const { UserModel, TrackModel, ArtistModel } = require("../bdModel");
 
-var usuarioController = {};
+var apiController = {};
 
 const client_id = "9f2a36c421ee43b59fc09d616c39c0f6";
 const client_secret = "cdbf2a5d45624a21a002e508b1529ec8";
@@ -48,12 +48,8 @@ async function fetchSpotifyData(endpoint, access_token) {
     });
   });
 }
-/*
-usuarioController.i = function (req, res) {
-  res.sendFile("C:/Users/estel.garces/Spotify/backend/views/index.html");
-};*/
 
-usuarioController.login = function (req, res) {
+apiController.login = function (req, res) {
   //Genera una clave de estado y la guarda en la sesión del usuario
   var state = generateRandomString(16);
   req.session[stateKey] = state;
@@ -74,7 +70,8 @@ usuarioController.login = function (req, res) {
   );
 };
 
-usuarioController.callback = function (req, res) {
+//funcion que es llamada despues de iniciar sesion en spoty para recoger la informacion de la api
+apiController.callback = function (req, res) {
   //La aplicación recibe un código de autorización y verifica el estado, obtiene el estado almacenado en la sesión
   var code = req.query.code || null;
   var state = req.query.state || null;
@@ -111,9 +108,8 @@ usuarioController.callback = function (req, res) {
         let refresh_token = body.refresh_token;
 
         try {
-          // Endpoint para guardar los datos de usuario
+          // Endpoint para guardar los datos de usuario y guarda en la session el id del usuario o da error
           var userInfo = await fetchSpotifyData("v1/me", access_token);
-          //guarda en la session el id del usuario que inicia sesion
           req.session.userId = userInfo.id;
         } catch (error) {
           console.error("Error al obtener la información del usuario " + error);
@@ -131,7 +127,7 @@ usuarioController.callback = function (req, res) {
             await User.save();
             console.log("Usuario guardado en la base de datos");
           } else {
-            console.log("Ya está registrado en la base de datos");
+            console.error("Ya está registrado en la base de datos");
           }
         } catch (error) {
           console.error(
@@ -213,7 +209,8 @@ usuarioController.callback = function (req, res) {
   }
 };
 
-usuarioController.refreshToken = function (req, res) {
+//funcion para refrescar el token de la api
+apiController.refreshToken = function (req, res) {
   // requesting access token from refresh token
   refresh_token = req.query.refresh_token;
   var authOptions = {
@@ -240,17 +237,9 @@ usuarioController.refreshToken = function (req, res) {
     }
   });
 };
-/*
-usuarioController.api = function (req, res) {
-  res.redirect("http://localhost:4200/api");
-};
 
-usuarioController.redirectApi = function (req, res) {
-  // Redirige a la página de inicio con el userId como parámetro
-  res.redirect(`/api?userId=${req.session.userId}`);
-};
-*/
-usuarioController.logout = async function (req, res) {
+//funcion para cerrar la sesion y borrar las cookies
+apiController.logout = async function (req, res) {
   try {
     //elimina los tokens de la base de datos
     var user = await UserModel.findOne({ _id: req.session.userId });
@@ -266,7 +255,7 @@ usuarioController.logout = async function (req, res) {
   // Destruye la sesión y borra las cookies
   req.session.destroy(function (err) {
     if (err) {
-      console.log(err);
+      console.error(err);
     } else {
       // Borra las cookies
       var cookies = req.cookies;
@@ -278,11 +267,7 @@ usuarioController.logout = async function (req, res) {
     //limpia las variables token
     access_token = null;
     refresh_token = null;
-
-    res.send(`
-    <p>Cierre sesión también en Spotify, <a href="https://www.spotify.com/account">haz clic aquí</a>.</p>
-    <p>Después <a href="/">haz clic aquí</a> para volver a la página de inicio.</p>
-    `);
   });
 };
-module.exports = usuarioController;
+
+module.exports = apiController;

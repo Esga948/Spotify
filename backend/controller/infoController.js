@@ -10,38 +10,24 @@ const {
 } = require("../bdModel");
 
 var infoController = {};
-/*
-infoController.datsUApp = function (req, res) {
-  try {
-    var userId = req.params.userId;
-    console.log("uSER ID: " + userId);
-    var usuario = UserAppModel.findById(userId);
-    if (usuario) {
-      res.json(usuario);
-    } else {
-      res.status(404).json({ message: "Usuario no encontrado" });
-    }
-  } catch (error) {
-    console.log(error);
-  }
-};*/
 
+//funcion para obtener la informacion del usuario
 infoController.datsU = async function (req, res) {
   try {
     var userId = req.params.userId;
-    //console.log("usER ID: " + userId);
     var usuario = await UserModel.findById(userId);
     if (usuario) {
       return res.json(usuario);
     } else {
-      return res.status(404).json({ message: "Usuario no encontrado" });
+      return res.status(404).json({ msj: "Usuario no encontrado" });
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.status(500).json({ msj: "Error en el servidor" });
   }
 };
 
+//funcion para obtener la informacion de las canciones
 infoController.datsT = async function (req, res) {
   try {
     var trackId = req.params.trackId;
@@ -49,14 +35,15 @@ infoController.datsT = async function (req, res) {
     if (track) {
       return res.json(track);
     } else {
-      return res.status(404).json({ message: "Track no encontrado" });
+      return res.status(404).json({ msj: "Track no encontrado" });
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.status(500).json({ msj: "Error en el servidor" });
   }
 };
 
+//funcion para obtener los datos de los artistas
 infoController.datsA = async function (req, res) {
   try {
     var artistId = req.params.artistId;
@@ -64,11 +51,37 @@ infoController.datsA = async function (req, res) {
     if (artista) {
       return res.json(artista);
     } else {
-      return res.status(404).json({ message: "Artista no encontrado" });
+      return res.status(404).json({ msj: "Artista no encontrado" });
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.status(500).json({ msj: "Error en el servidor" });
+  }
+};
+
+//funcion para poner el id en los usuarios de la app
+infoController.users = async function (req, res) {
+  try {
+    const email = req.params.email;
+    const userId = req.params.userId;
+
+    //arreglar
+    const usuario = await UserAppModel.findOne({ email: email });
+    if (!usuario) {
+      return res.status(404).json({ msj: "Usuario no encontrado." });
+    } else {
+      const exist = await UserAppModel.findOne({ idSpoty: userId });
+      if (exist) {
+        return res.status(501).json({ msj: "Ya existe un usuario vinculado a esa cuenta de spotify"})
+      } else {
+        usuario.idSpoty = userId;
+        await usuario.save();
+        return res.json({msj: "El id se ha guardado correctamente"})
+      }
+    }
+  } catch (error) {
+    console.error("Error en la ruta /users:", error.message);
+    res.status(500).json({ error: "Error interno del servidor." });
   }
 };
 
