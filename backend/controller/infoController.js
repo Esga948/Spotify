@@ -67,17 +67,18 @@ infoController.users = async function (req, res) {
 
     //arreglar
     const usuario = await UserAppModel.findOne({ email: email });
-    if (!usuario) {
-      return res.status(404).json({ msj: "Usuario no encontrado." });
-    } else {
+    if (usuario.idSpoty === "") {
       const exist = await UserAppModel.findOne({ idSpoty: userId });
       if (exist) {
-        return res.status(501).json({ msj: "Ya existe un usuario vinculado a esa cuenta de spotify"})
+        UserAppModel.remove({ email: email });
+        return res.status(409).json({ msj: "Ya existe un usuario vinculado a esa cuenta de spotify" });
       } else {
         usuario.idSpoty = userId;
         await usuario.save();
-        return res.json({msj: "El id se ha guardado correctamente"})
+        return res.json({ msj: "El id se ha guardado correctamente" });
       }
+    } else {
+      return res.json({ msj: "Usuario ya registrado" })
     }
   } catch (error) {
     console.error("Error en la ruta /users:", error.message);

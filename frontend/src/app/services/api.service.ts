@@ -30,7 +30,6 @@ export class ApiService {
   }
 
   users(email: string, userId: string): Observable<any> {
-    const url = `${this.API_SERVER}/users/${email}/${userId}`;
-    return this.http.get(url);
+    return this.http.get(`${this.API_SERVER}/users/${email}/${userId}`);
   }
 }

@@ -4,6 +4,7 @@ import { UserApp } from '../models/user-app';
 import { JwtResp } from '../models/jwtresp';
 import { tap } from 'rxjs';
 import { Observable, BehaviorSubject } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable()
 export class InicioAppService {
@@ -12,20 +13,27 @@ export class InicioAppService {
   private token: string = '';
   private name: string = '';
   private email: string = '';
-  constructor(private httpClient: HttpClient) {}
+  constructor(private httpClient: HttpClient, private toast: ToastrService) {}
 
   registerApp(user: UserApp): Observable<JwtResp> {
     return this.httpClient
       .post<JwtResp>(`${this.APP_SERVER}/registerApp`, user)
       .pipe(
-        tap((res: JwtResp) => {
-          if (res) {
-            // guardar token
-            this.saveToken(res.dataUser.aToken, res.dataUser.expiresIn);
-            this.saveName(user.name);
-            this.saveEmail(user.email);
+        tap(
+          (res: JwtResp) => {
+            if (res) {
+              // guardar token
+              this.saveToken(res.dataUser.aToken, res.dataUser.expiresIn);
+              this.saveName(user.name);
+              this.saveEmail(user.email);
+            }
+          },
+          (error) => {
+            // Manejar errores aquí
+            this.toast.error(error.error.msj || 'Error desconocido');
+            console.error('Error en el registro:', error);
           }
-        })
+        )
       );
   }
 
@@ -33,12 +41,21 @@ export class InicioAppService {
     return this.httpClient
       .post<JwtResp>(`${this.APP_SERVER}/loginApp`, user)
       .pipe(
-        tap((res: JwtResp) => {
-          if (res) {
-            // guardar token
-            this.saveToken(res.dataUser.aToken, res.dataUser.expiresIn);
+        tap(
+          (res: JwtResp) => {
+            if (res) {
+              // guardar token
+              this.saveToken(res.dataUser.aToken, res.dataUser.expiresIn);
+              this.saveName(res.dataUser.name);
+              this.saveEmail(user.email);
+            }
+          },
+          (error) => {
+            // Manejar errores aquí
+            this.toast.error(error.error.msj || 'Error desconocido');
+            console.error('Error en el registro:', error);
           }
-        })
+        )
       );
   }
 
@@ -54,20 +71,22 @@ export class InicioAppService {
           if (res.tokens) {
             console.log('Los tokens coinciden');
           } else {
+            this.toast.error('Los tokens no coinciden');
             console.log('Los tokens no coinciden');
           }
         })
       );
   }
 
-  logout(userId: string): Observable<any> {
+  logout(): void {
     this.token = '';
     this.email = '';
+    this.name = '';
     localStorage.removeItem('ACCESS_TOKEN');
     localStorage.removeItem('EXPIRES_IN');
     localStorage.removeItem('NAME');
     localStorage.removeItem('EMAIL');
-    return this.httpClient.post(`${this.APP_SERVER}/logout/${userId}`, {});
+    this.httpClient.post(`${this.APP_SERVER}/logout`, {});
   }
 
   private saveToken(token: string, expiresIn: string): void {
@@ -81,7 +100,7 @@ export class InicioAppService {
   }
 
   private saveName(name: string): void {
-    console.log('NAME: ' + name);
+    localStorage.setItem('NAME', name);
     this.name = name;
   }
 

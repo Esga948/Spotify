@@ -6,6 +6,7 @@ import { Artist } from 'src/app/models/artist';
 import { Track } from 'src/app/models/track';
 import { InicioAppService } from 'src/app/services/inicio-app.service';
 import { forkJoin } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-api',
@@ -42,7 +43,8 @@ export class ApiComponent implements OnInit {
   constructor(
     private apiService: ApiService,
     private route: ActivatedRoute,
-    private inicioAppService: InicioAppService
+    private inicioAppService: InicioAppService,
+    private toast: ToastrService,
   ) {}
 
   ngOnInit(): void {
@@ -104,14 +106,25 @@ export class ApiComponent implements OnInit {
   }
 
   users(): void {
-    this.apiService.users(this.userAppEmail, this.userId).subscribe((res) => {
-      console.log(res);
-    });
+    this.apiService.users(this.userAppEmail, this.userId).subscribe(
+      (res) => {
+        console.log(res);
+      },
+      (err) => {
+        if (err.status === 409) {
+          alert("Ya existe una cuenta vinculada con este usuario de Spotify")
+          window.location.href = '/registerApp';
+        } else {
+          console.error('Error al obtener el usuario');
+        }
+      }
+    );
   }
 
   logout(): void {
-    this.inicioAppService.logout(this.userId).subscribe(() => {
-      window.location.href = '/login';
-    });
+    this.inicioAppService.logout();
+    window.open('https://open.spotify.com/intl-es', '_blank');
+    alert("Cierra sesion en Spotify")
+    window.location.href = '/loginApp';
   }
 }

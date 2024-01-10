@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { ToastrModule } from 'ngx-toastr';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -23,7 +25,12 @@ import { ApiService } from './services/api.service';
     AuthTokenComponent,
     ApiComponent,
   ],
-  imports: [BrowserModule, AppRoutingModule, FormsModule, HttpClientModule],
+  imports: [BrowserModule, AppRoutingModule, FormsModule, HttpClientModule, NoopAnimationsModule,
+  ToastrModule.forRoot({
+    timeOut: 5000,
+    positionClass: 'toast-top-right',
+    preventDuplicates: true,
+  })],
   providers: [InicioAppService, ApiService],
   bootstrap: [AppComponent],
 })

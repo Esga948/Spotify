@@ -28,7 +28,9 @@ usuarioAppController.createUser = async function (req, res) {
     const user = await UserAppModel.findOne({ email: newUserApp.email });
     if (user) {
       console.error("Email ya existe un usuario con ese email");
-      return res.status(409).json({ msj: "Error" });
+      return res
+        .status(409)
+        .json({ msj: "Email ya existe un usuario con ese email" });
     } else {
       const user = UserAppModel.create(newUserApp);
       const expiresIn = 24 * 60 * 60;
@@ -75,7 +77,7 @@ usuarioAppController.createUser = async function (req, res) {
     }
   } catch (err) {
     console.error("Error: " + err);
-    return res.status(500).json({ msj: "Error" });
+    return res.status(500).json({ msj: "Error del servidor" });
   }
 };
 
@@ -90,7 +92,7 @@ usuarioAppController.loginAppUser = async (req, res, next) => {
     const user = await UserAppModel.findOne({ email: userData.email });
     if (!user) {
       console.error("No se ha encontrado el email");
-      return res.status(409).json({ msj: "Error" });
+      return res.status(409).json({ msj: "No se ha encontrado el email" });
     } else {
       const resultPass = bcrypt.compareSync(userData.password, user.password);
       if (resultPass) {
@@ -108,12 +110,12 @@ usuarioAppController.loginAppUser = async (req, res, next) => {
         return res.json({ dataUser });
       } else {
         console.error("Contraseña incorrecta");
-        return res.status(408).json({ msj: "Error" });
+        return res.status(408).json({ msj: "Contraseña incorrecta" });
       }
     }
   } catch (err) {
     console.error("Error: " + err);
-    return res.status(500).json({ msj: "Error" });
+    return res.status(500).json({ msj: "Error del servidor" });
   }
 };
 

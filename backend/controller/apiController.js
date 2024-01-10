@@ -1,7 +1,12 @@
 var request = require("request");
 var session = require("express-session");
 var querystring = require("querystring");
-const { UserModel, TrackModel, ArtistModel } = require("../bdModel");
+const {
+  UserModel,
+  UserAppModel,
+  TrackModel,
+  ArtistModel,
+} = require("../bdModel");
 
 var apiController = {};
 
@@ -242,14 +247,13 @@ apiController.refreshToken = function (req, res) {
 apiController.logout = async function (req, res) {
   try {
     //elimina los tokens de la base de datos
-    var user = await UserModel.findOne({ _id: req.session.userId });
+    var user = await UserAppModel.findOne({ idSpoty: req.session.userId });
     if (user) {
-      user.access_token = "";
-      user.refresh_token = "";
+      user.token = "";
       await user.save();
     }
   } catch (error) {
-    console.error("Error al borrar los tokens:", error);
+    console.error("Error al borrar el token:", error);
   }
 
   // Destruye la sesión y borra las cookies

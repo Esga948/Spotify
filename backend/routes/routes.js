@@ -12,7 +12,7 @@ router.post("/authToken", usuarioAppController.authToken);
 router.get("/login", apiController.login);
 router.get("/callback", apiController.callback);
 router.get("/refreshToken", apiController.refreshToken);
-router.get("/logout", apiController.logout);
+router.post("/logout", apiController.logout);
 
 router.get("/datsU/:userId", infoController.datsU);
 router.get("/datsT/:trackId", infoController.datsT);
