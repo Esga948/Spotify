@@ -1,7 +1,7 @@
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,700);
 
 body {
-  background: #456;
+  background: rgb(173, 195, 218);
   font-family: 'Open Sans', sans-serif;
 }
 
@@ -94,4 +94,10 @@ body {
   color: #fff;
   cursor: pointer;
 
+}
+
+.toast-error{
+  color: rgb(255, 0, 0) !important;
+  font-family: 'Times New Roman', serif !important;
+  font-size: 20px;
 }

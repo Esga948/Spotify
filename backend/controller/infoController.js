@@ -65,20 +65,31 @@ infoController.users = async function (req, res) {
     const email = req.params.email;
     const userId = req.params.userId;
 
-    //arreglar
+    //Buscamos el usuarioApp y comprobamos que no tenga ninguna cuenta de spoty ya vinculada
     const usuario = await UserAppModel.findOne({ email: email });
     if (usuario.idSpoty === "") {
+      //Buscamos que ninguna otra cuenta tenga esa cuenta de spoty vinculada
       const exist = await UserAppModel.findOne({ idSpoty: userId });
+      //si ya existe un usuario con esa cuenta de spoty se eliminan los datos del usuarioApp
       if (exist) {
-        UserAppModel.remove({ email: email });
-        return res.status(409).json({ msj: "Ya existe un usuario vinculado a esa cuenta de spotify" });
+        UserAppModel.deleteOne({ email: email })
+          .then((res) => {
+            console.log("Se han eliminado los datos");
+          })
+          .catch((err) => {
+            console.log("ERROR: " + err);
+          });
+
+        return res.status(409).json({
+          msj: "Ya existe un usuario vinculado a esa cuenta de spotify",
+        });
       } else {
         usuario.idSpoty = userId;
         await usuario.save();
         return res.json({ msj: "El id se ha guardado correctamente" });
       }
     } else {
-      return res.json({ msj: "Usuario ya registrado" })
+      return res.json({ msj: "Usuario ya registrado" });
     }
   } catch (error) {
     console.error("Error en la ruta /users:", error.message);

@@ -8,6 +8,7 @@ const infoController = require("../controller/infoController.js");
 router.post("/registerApp", usuarioAppController.createUser);
 router.post("/loginApp", usuarioAppController.loginAppUser);
 router.post("/authToken", usuarioAppController.authToken);
+router.post("/reenviarToken", usuarioAppController.reenviarCorreo);
 
 router.get("/login", apiController.login);
 router.get("/callback", apiController.callback);

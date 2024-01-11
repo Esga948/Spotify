@@ -7,6 +7,36 @@ const { UserAppModel } = require("../bdModel.js");
 
 var usuarioAppController = {};
 
+function enviarCorreo(email, token) {
+  let transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    auth: {
+      user: "esga948@vidalibarraquer.net",
+      pass: "39471948S",
+    },
+  });
+
+  //config correo
+  const htmlTemp = fs.readFileSync("../backend/email.html", "utf-8");
+  const htmlContent = htmlTemp.replace("{{token}}", token);
+
+  let mailOptions = {
+    from: "esga948@vidalibarraquer.net",
+    to: email,
+    subject: "Inicio de sesión",
+    html: htmlContent,
+  };
+
+  //enviar el correo
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error(error);
+    } else {
+      console.log("Token enviado");
+    }
+  });
+}
+
 //funcion para crear el usuario y guardarlo en la base de datos
 usuarioAppController.createUser = async function (req, res) {
   var userId = req.params.userId;
@@ -27,10 +57,10 @@ usuarioAppController.createUser = async function (req, res) {
   try {
     const user = await UserAppModel.findOne({ email: newUserApp.email });
     if (user) {
-      console.error("Email ya existe un usuario con ese email");
+      console.error("Ya existe un usuario con ese email");
       return res
         .status(409)
-        .json({ msj: "Email ya existe un usuario con ese email" });
+        .json({ msj: "Ya existe un usuario con ese email" });
     } else {
       const user = UserAppModel.create(newUserApp);
       const expiresIn = 24 * 60 * 60;
@@ -45,33 +75,8 @@ usuarioAppController.createUser = async function (req, res) {
       };
 
       //envio del correo
-      let transporter = nodemailer.createTransport({
-        host: "smtp.gmail.com",
-        auth: {
-          user: "esga948@vidalibarraquer.net",
-          pass: "39471948S",
-        },
-      });
-      //config correo
+      enviarCorreo(newUserApp.email, token);
 
-      const htmlTemp = fs.readFileSync("../backend/email.html", "utf-8");
-      const htmlContent = htmlTemp.replace("{{token}}", token);
-
-      let mailOptions = {
-        from: "esga948@vidalibarraquer.net",
-        to: newUserApp.email,
-        subject: "Inicio de sesión",
-        html: htmlContent,
-      };
-
-      //enviar el correo
-      transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          console.error(error);
-        } else {
-          console.log("Token enviado");
-        }
-      });
       //enviamos la respuesta al front
       return res.json({ dataUser });
     }
@@ -79,6 +84,20 @@ usuarioAppController.createUser = async function (req, res) {
     console.error("Error: " + err);
     return res.status(500).json({ msj: "Error del servidor" });
   }
+};
+
+usuarioAppController.reenviarCorreo = async function (req, res) {
+  const email = req.body.email;
+  console.log("Email: " + email);
+  const token = Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
+
+  await UserAppModel.findOneAndUpdate(
+    { email: email },
+    { $set: { token: token } }
+  );
+  enviarCorreo(email, token);
+
+  return res.json({ msj: "Token enviado" });
 };
 
 //funcion para iniciar sesion y comprobaciones
@@ -91,8 +110,8 @@ usuarioAppController.loginAppUser = async (req, res, next) => {
   try {
     const user = await UserAppModel.findOne({ email: userData.email });
     if (!user) {
-      console.error("No se ha encontrado el email");
-      return res.status(409).json({ msj: "No se ha encontrado el email" });
+      console.error("No se ha encontrado el usuario");
+      return res.status(409).json({ msj: "No se ha encontrado el usuario" });
     } else {
       const resultPass = bcrypt.compareSync(userData.password, user.password);
       if (resultPass) {

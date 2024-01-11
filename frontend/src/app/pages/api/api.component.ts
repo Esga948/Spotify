@@ -44,7 +44,7 @@ export class ApiComponent implements OnInit {
     private apiService: ApiService,
     private route: ActivatedRoute,
     private inicioAppService: InicioAppService,
-    private toast: ToastrService,
+    private toast: ToastrService
   ) {}
 
   ngOnInit(): void {
@@ -112,11 +112,11 @@ export class ApiComponent implements OnInit {
       },
       (err) => {
         if (err.status === 409) {
-          alert("Ya existe una cuenta vinculada con este usuario de Spotify")
-          window.location.href = '/registerApp';
+          alert('Ya existe una cuenta vinculada con este usuario de Spotify');
         } else {
           console.error('Error al obtener el usuario');
         }
+        window.location.href = '/registerApp';
       }
     );
   }
@@ -124,7 +124,7 @@ export class ApiComponent implements OnInit {
   logout(): void {
     this.inicioAppService.logout();
     window.open('https://open.spotify.com/intl-es', '_blank');
-    alert("Cierra sesion en Spotify")
+    alert('Cierra sesion tambien en Spotify');
     window.location.href = '/loginApp';
   }
 }

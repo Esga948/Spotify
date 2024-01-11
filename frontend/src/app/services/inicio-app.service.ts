@@ -78,6 +78,22 @@ export class InicioAppService {
       );
   }
 
+  reenviarToken(): void {
+    const email = this.getEmail();
+
+    this.httpClient
+      .post(`${this.APP_SERVER}/reenviarToken`, { email: email })
+      .subscribe(
+        () => {
+          this.toast.info('Token enviado');
+        },
+        (err) => {
+          console.log('Error: ' + err);
+          this.toast.error('Error al enviar el token');
+        }
+      );
+  }
+
   logout(): void {
     this.token = '';
     this.email = '';

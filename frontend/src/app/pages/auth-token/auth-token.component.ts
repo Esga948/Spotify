@@ -23,4 +23,8 @@ export class AuthTokenComponent implements OnInit {
       }
     });
   }
+
+  sendToken(){
+    this.inicioAppService.reenviarToken();
+  }
 }
